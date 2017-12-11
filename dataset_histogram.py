@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 dataset_paths = []
 dataset_paths.append('./training_data/Forward_track/driving_log.csv')
-dataset_paths.append('./training_data/Backward_track/driving_log.csv')
-dataset_paths.append('./training_data/Sides_recovery/driving_log.csv')
+#dataset_paths.append('./training_data/Backward_track/driving_log.csv')
+#dataset_paths.append('./training_data/Sides_recovery/driving_log.csv')
 
 
 training_steering = []

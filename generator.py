@@ -59,7 +59,7 @@ def dataset_generator(batch_size=32, paths=[],  correction = 0.0):
             except:
                 pass
 
-
+        print("end of data")
 
 # Generator Testing script
 
@@ -68,5 +68,7 @@ if __name__ == '__main__':
     data_generator = dataset_generator(batch_size=1000, paths=[r'./driving_log.csv'], correction=.15)
     for i in range(2):
         x, y = next(data_generator)
-        print (i)
-        print ('len(x) = '+str(len(x)))
+        for i in range (len(x)):
+            print ("steering = "+str(y[i]))
+            cv2.imshow("dataset",x[i])
+            cv2.waitKey(0)
