@@ -18,7 +18,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./writeup_files/model.PNG "Model Visualization"
+[image1]: ./writeup_files/model.png "Model Visualization"
 [image2]: ./writeup_files/histogram_before_filtering.png "histogram_before_filtering"
 [image3]: ./writeup_files/data_histogram_filtered.png "data_histogram_filtered"
 
