@@ -26,7 +26,7 @@ def preprocess(paths):
         if (abs(float(line[3])) <= 0.0001):
             i += 1
             
-            if(i%20):
+            if(i%24):
                 continue
              
         
@@ -52,23 +52,30 @@ def preprocess(paths):
         steering_measurements.append(float(line[3]))
         
 
-        #images.append(left_image)
-        #steering_measurements.append(float(line[3]) + correction)
-         
-        #images.append(right_image)
-        #steering_measurements.append(float(line[3]) - correction)
+        images.append(left_image)
+        steering_measurements.append(float(line[3]) + correction)
+        
+        images.append(right_image)
+        steering_measurements.append(float(line[3]) - correction)
         
         
         images.append(np.fliplr(center_image))
         steering_measurements.append(float(line[3]) * -1)
 
-        #images.append(np.fliplr(left_image))
-        #steering_measurements.append(float(line[3]) * -1 - correction)
+        images.append(np.fliplr(left_image))
+        steering_measurements.append(float(line[3]) * -1 - correction)
 
-        #images.append(np.fliplr(right_image))
-        #steering_measurements.append(float(line[3]) * -1 + correction)
+        images.append(np.fliplr(right_image))
+        steering_measurements.append(float(line[3]) * -1 + correction)
 
-        
+    plt.figure()
+    plt.hist(steering_measurements, bins=50)
+    plt.title("Training dataset Steering command Histogram")
+    plt.xlabel("Value")
+    plt.ylabel("Frequency")
+    plt.savefig(r'./data_histogram.png')
+    plt.show('Training dataset Steering command Histogram.png')
+
     X_train = np.array(images)
     Y_train = np.array(steering_measurements)
     

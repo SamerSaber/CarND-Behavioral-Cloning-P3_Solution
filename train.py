@@ -40,7 +40,6 @@ print("Dataset Preprocessing Done!")
  
 #x_out = np.concatenate((x_out,X_rare))
 #y_out = np.concatenate((y_out,Y_rare))
-
 plt.figure()
 plt.hist(y_out, bins=501)
 plt.title("Training dataset Steering command Histogram Final")
@@ -48,7 +47,7 @@ plt.xlabel("Value")
 plt.ylabel("Frequency")
 plt.savefig(r'./data_histogram_final.png')
 plt.show('Training dataset Steering command Histogram Final.png')
-history_object = model.fit(x_out, y_out, validation_split=.2, shuffle=True, nb_epoch=30 , batch_size=164)
+history_object = model.fit(x_out, y_out, validation_split=.2, shuffle=True, nb_epoch=5 , batch_size=164)
 
 
 
