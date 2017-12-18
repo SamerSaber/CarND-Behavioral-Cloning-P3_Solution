@@ -18,13 +18,10 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image1]: ./writeup_files/model.PNG "Model Visualization"
+[image2]: ./writeup_files/histogram_before_filtering.png "histogram_before_filtering"
+[image3]: ./writeup_files/data_histogram_filtered.png "data_histogram_filtered"
+
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -35,38 +32,44 @@ The goals / steps of this project are the following:
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
+* model.py containing the script to create the model
+* train.py to train the model.
+* dataset_preparator.py This contains the functions that reads the training data, augment it and filter the histogram.
 * drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* model_7.h5 containing a trained convolution neural network 
+* writeup_report.md summarizing the results
 
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
-```sh
-python drive.py model.h5
+```
+python drive.py model_7.h5
 ```
 
 #### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The model.py ,train.py and dataset_preparator.py files contain the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
 ### Model Architecture and Training Strategy
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+My model is adapted from NVidia model with some tunings and removing one convolution layer as show below.
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+                                                          
+![alt text][image1]
+
+The model includes ELU layers to introduce nonlinearity,and the data is normalized in the model using a Keras lambda layer . 
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+To avoid over fitting I got 2 attempts
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+* Added dropout layer after each layer.
+* Replaced the dropout layers with adding regulizers for each layer and it worked better.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually.
 
 #### 4. Appropriate training data
 
@@ -84,46 +87,50 @@ My first step was to use a convolution neural network model similar to the ... I
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
-To combat the overfitting, I modified the model so that ...
+To combat the overfitting, I modified the model as mentioned above.
 
-Then I ... 
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I followed the following strategies 
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+*  Recording more data at the desired spots.
+*  Taking care of the training dataset histogram to be balanced, This will be descriped below.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
+The final model architecture consisted of a convolution neural network with the following layers and layer sizes ...
+* Cropping2D
+* Lambda for normalization                                                                               
+* Convolution2D(8, 5, 5, subsample=(2, 2), init='he_normal', activation='elu',W_regularizer=regularizers.l2(0.001))) 
+* Convolution2D(20, 5, 5, subsample=(2, 2), init='he_normal', activation='elu',W_regularizer=regularizers.l2(0.001)))
+* Convolution2D(35, 5, 5, subsample=(2, 2), init='he_normal', activation='elu',W_regularizer=regularizers.l2(0.001)))
+* Convolution2D(64, 3, 3, subsample=(1, 1), init='he_normal', activation='elu',W_regularizer=regularizers.l2(0.001)))
+* Flatten                                                                                                                   
+* Dense(100, activation='elu', init='he_normal',W_regularizer=regularizers.l2(0.01)))                                                                                                                                          
+* Dense(50, activation='elu', init='he_normal',W_regularizer=regularizers.l2(0.001)))                                                                                                             
+* Dense(20, init='he_normal',W_regularizer=regularizers.l2(0.001)))                                     
+* Dense(1, init='he_normal',W_regularizer=regularizers.l2(0.001)))                                     
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+I captured the training dataset as following 
+* 4 laps driving in the middle of the road forward direction.
+* 2 laps driving in the middle of the road backward direction.
+* 2 laps recovering from the sides.
+* Recording more data for the rare situations like the bridge and the road with lane line in one side.
+
+I augmented the data using the following:-
+* Flipping the input image and multiplying the steering angles by -1.
+* Adding the right and left pictures with correction value of .1
+
+After the collection process, I had the following histogram 
 
 ![alt text][image2]
-
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+ So I needed to filter the dataset to have balanced histogram, I filtered it by dividing the data set to 500 pins each pin allowed to have only 25 entry.
+after filtering the histogram becomes as following
 
 ![alt text][image3]
-![alt text][image4]
-![alt text][image5]
 
-Then I repeated this process on track two in order to get more data points.
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
