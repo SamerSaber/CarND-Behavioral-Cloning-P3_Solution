@@ -8,7 +8,7 @@ def preprocess(paths):
     images = []
     steering_measurements = []
     lines = []
-    correction = .15
+    correction = .1
     for path in paths: 
         with open(path) as csvfile:
             reader = csv.reader(csvfile)
@@ -19,18 +19,14 @@ def preprocess(paths):
     
     i = 0
     j = 0
-    REGION_04_1 = 0
+
     REGION_15_17 = 0
-    REGION_11_18 = 0
-    REGION_1_12 = 0
-    REGION_12_165 = 0
-    REGION_01_034 = 0
     for line in lines :
         j += 1
         if (abs(float(line[3])) <= 0.0001):
             i += 1
             
-            if(i%24):
+            if(i%20):
                 continue
              
         
@@ -39,76 +35,44 @@ def preprocess(paths):
             REGION_15_17 +=1 
             if (REGION_15_17 % 4):
                 continue
-#         
-#         elif (abs(float(line[3])) > 0.12 and abs(float(line[3])) < 0.165):
-#             REGION_12_165 +=1 
-#             if (REGION_12_165 % 8):
-#                 continue
-# 
-#         elif (abs(float(line[3])) > 0.11 and abs(float(line[3])) < 0.18):
-#             REGION_11_18 +=1 
-#             if (REGION_11_18 % 6):
-#                 continue
-# 
-#         elif (abs(float(line[3])) > 0.1 and abs(float(line[3])) < 0.165):
-#             REGION_1_12 +=1 
-#             if (REGION_1_12 % 2):
-#                 continue
-#             
-#         elif (abs(float(line[3])) > 0.01 and abs(float(line[3])) < 0.035):
-#             REGION_01_034 +=1 
-#             if (REGION_01_034 % 2):
-#                 continue    
     
+#         print(line[0])
+#         print(line[1])
+#         print(line[2])
         center_image = cv2.imread(line[0])
-        left_image   = cv2.imread(line[1][1:])
-        right_image  = cv2.imread(line[2][1:])
+        left_image   = cv2.imread(line[1])
+        right_image  = cv2.imread(line[2])
         
-#         center_image = cv2.resize(center_image,(320,160), interpolation = cv2.INTER_CUBIC)
-#         left_image   = cv2.resize(center_image,(320,160), interpolation = cv2.INTER_CUBIC)
-#         right_image  = cv2.resize(center_image,(320,160), interpolation = cv2.INTER_CUBIC)
-        
+#         cv2.imshow("center",center_image)
+#         cv2.imshow("left",left_image)
+#         cv2.imshow("right",right_image)
+#         cv2.waitKey(0)
+#                 
         images.append(center_image)
         steering_measurements.append(float(line[3]))
         
 
-        images.append(left_image)
-        steering_measurements.append(float(line[3]) + correction)
+        #images.append(left_image)
+        #steering_measurements.append(float(line[3]) + correction)
          
-        images.append(right_image)
-        steering_measurements.append(float(line[3]) - correction)
+        #images.append(right_image)
+        #steering_measurements.append(float(line[3]) - correction)
         
         
         images.append(np.fliplr(center_image))
         steering_measurements.append(float(line[3]) * -1)
 
-        images.append(np.fliplr(left_image))
-        steering_measurements.append(float(line[3]) * -1 - correction)
+        #images.append(np.fliplr(left_image))
+        #steering_measurements.append(float(line[3]) * -1 - correction)
 
-        images.append(np.fliplr(right_image))
-        steering_measurements.append(float(line[3]) * -1 + correction)
+        #images.append(np.fliplr(right_image))
+        #steering_measurements.append(float(line[3]) * -1 + correction)
 
         
-#         cv2.imshow('dataset_c_c',cv2.imread(line[0])[70:140, 0:320])
-#         cv2.imshow('dataset_l_c',np.fliplr(cv2.imread(line[2][1:])[70:140, 0:320]))
-#         cv2.imshow('dataset_r_c',cv2.imread(line[2][1:])[60:140, 0:320])
-#         
-#         cv2.imshow('dataset_c',center_image)
-#         cv2.imshow('dataset_l',left_image)
-#         cv2.imshow('dataset_r',right_image)
-#          
-#         cv2.waitKey(0)
-
     X_train = np.array(images)
     Y_train = np.array(steering_measurements)
     
-    plt.figure()
-    plt.hist(Y_train, bins=50)
-    plt.title("Training dataset Steering command Histogram")
-    plt.xlabel("Value")
-    plt.ylabel("Frequency")
-    plt.savefig(r'./data_histogram.png')
-    plt.show('Training dataset Steering command Histogram.png')
+   
     return X_train, Y_train
 
 
@@ -146,14 +110,12 @@ def filter(X = [], Y = [] , number_of_items = 500, number_of_pins = 20):
                 else:
                     number_of_items_list[j] +=1
                 break
-            
-    plt.figure()
-    plt.hist(Y_filtered, bins=50)
-    plt.title("Training dataset Steering command Histogram")
-    plt.xlabel("Value")
-    plt.ylabel("Frequency")
-    plt.savefig(r'./data_histogram_filtered.png')
-    plt.show('Training dataset Steering command Histogram.png')
+    #print (number_of_items_list)      
+    #for i in range(len(X_filtered)):
+        #cv2.imshow("img",X_filtered[i])
+        #print(Y_filtered[i])
+        #cv2.waitKey(0)
+        
                  
              
     return np.array(X_filtered),np.array(Y_filtered)
