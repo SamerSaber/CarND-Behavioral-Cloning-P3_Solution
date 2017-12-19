@@ -8,7 +8,7 @@ def preprocess(paths):
     images = []
     steering_measurements = []
     lines = []
-    correction = .1
+    correction = .2
     for path in paths: 
         with open(path) as csvfile:
             reader = csv.reader(csvfile)
@@ -40,8 +40,11 @@ def preprocess(paths):
 #         print(line[1])
 #         print(line[2])
         center_image = cv2.imread(line[0])
+        center_image = cv2.cvtColor(center_image,cv2.COLOR_BGR2RGB)
         left_image   = cv2.imread(line[1])
+        left_image = cv2.cvtColor(left_image,cv2.COLOR_BGR2RGB)
         right_image  = cv2.imread(line[2])
+        right_image = cv2.cvtColor(right_image,cv2.COLOR_BGR2RGB)
         
 #         cv2.imshow("center",center_image)
 #         cv2.imshow("left",left_image)
