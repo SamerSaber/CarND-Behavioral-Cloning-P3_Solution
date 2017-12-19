@@ -7,6 +7,7 @@ import generator
 import numpy as np
 from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
+import keras 
 
 print("Creating the model.")
 # Create Instance of Custom Nvidia Model
@@ -31,9 +32,10 @@ dataset_paths.append(r'./training_data/Sides_recovery/driving_log.csv')
 #dataset_paths.append(r'./driving_log.csv')
 rare_situation_paths = []
 dataset_paths.append(r'./training_data/Rare_Situations/driving_log.csv')
+
 print("Dataset Preprocessing ....")
 X_train , Y_train = dataset_preparator.preprocess(dataset_paths)
-x_out, y_out =dataset_preparator.filter(X_train,Y_train , number_of_items=25 , number_of_pins= 501)
+x_out, y_out =dataset_preparator.filter(X_train,Y_train , number_of_items=40 , number_of_pins= 501)
 #x_out, y_out =dataset_preparator.filter(x_out,y_out , number_of_items=25 , number_of_pins= 501)
 print("Dataset Preprocessing Done!")
 #X_rare, Y_rare = dataset_preparator.preprocess(rare_situation_paths)
@@ -47,11 +49,14 @@ plt.xlabel("Value")
 plt.ylabel("Frequency")
 plt.savefig(r'./data_histogram_final.png')
 plt.show('Training dataset Steering command Histogram Final.png')
-history_object = model.fit(x_out, y_out, validation_split=.2, shuffle=True, nb_epoch=5 , batch_size=164)
+
+ES = keras.callbacks.EarlyStopping(monitor = 'val_loss' , min_delta = 0.0001 ,patience = 3, verbose = 0, mode = 'auto')
+callbacks_list = [ES]
+history_object = model.fit(x_out, y_out, validation_split=.2, shuffle=True, nb_epoch=100 , batch_size=164, callbacks = callbacks_list)
 
 
 
-model.save(r'model_8.h5')
+model.save(r'model_10.h5')
 
 
 #plot the training and validation loss for each epoch
