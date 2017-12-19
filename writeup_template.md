@@ -21,6 +21,10 @@ The goals / steps of this project are the following:
 [image1]: ./writeup_files/model.png "Model Visualization"
 [image2]: ./writeup_files/histogram_before_filtering.png "histogram_before_filtering"
 [image3]: ./writeup_files/data_histogram_filtered.png "data_histogram_filtered"
+[image4]: ./writeup_files/center.png   "center image"
+[image5]: ./writeup_files/left.png "left image"
+[image6]: ./writeup_files/right.png "right image"
+[image7]: ./writeup_files/fliped_center.png "center flipped image"
 
 
 ## Rubric Points
@@ -81,9 +85,9 @@ For details about how I created the training data, see the next section.
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+The overall strategy for deriving a model architecture was to start with simple model then enhance it till reaching good results.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+My first step was to use a convolution neural network model similar to the LeNet model as it is very simple then I tried the NVIDIA model because it is originally designed for similar purpose.
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
@@ -121,16 +125,22 @@ I captured the training dataset as following
 
 I augmented the data using the following:-
 * Flipping the input image and multiplying the steering angles by -1.
+
+![alt text][image4]  ![alt text][image7]
+
 * Adding the right and left pictures with correction value of .1
+
+![alt text][image5] ![alt text][image4] ![alt text][image6]
 
 After the collection process, I had the following histogram 
 
 ![alt text][image2]
- So I needed to filter the dataset to have balanced histogram, I filtered it by dividing the data set to 500 pins each pin allowed to have only 25 entry.
+
+ So I needed to filter the dataset to have balanced histogram, I filtered it by dividing the data set to 500 pins each pin allowed to have only 35 entry.
 after filtering the histogram becomes as following
 
 ![alt text][image3]
 
 I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 60 as evidenced by using the keras callback "early stopping", I used an adam optimizer so that manually training the learning rate wasn't necessary.
